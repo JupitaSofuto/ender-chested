@@ -10,6 +10,7 @@ import com.legacy.ender_chest_horses.HorseEvents;
 import net.minecraft.entity.passive.horse.AbstractChestedHorseEntity;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.passive.horse.HorseEntity;
+import net.minecraft.entity.passive.horse.LlamaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.Inventory;
@@ -113,7 +114,7 @@ public class EnderHorseCapability implements IEnderHorse
 		PlayerEntity player = event.getPlayer();
 		Hand hand = event.getHand();
 		ItemStack stack = player.getHeldItem(hand);
-		boolean canChest = this.enderHorse instanceof AbstractChestedHorseEntity && !((AbstractChestedHorseEntity) this.enderHorse).hasChest() || !(this.enderHorse instanceof AbstractChestedHorseEntity);
+		boolean canChest = !(this.enderHorse instanceof LlamaEntity) && (this.enderHorse instanceof AbstractChestedHorseEntity && !((AbstractChestedHorseEntity) this.enderHorse).hasChest() || !(this.enderHorse instanceof AbstractChestedHorseEntity));
 
 		if (this.enderHorse instanceof AbstractChestedHorseEntity && this.isEnderChested() && stack.getItem().getTags().contains(Tags.Blocks.CHESTS.getName()) && !stack.getItem().getTags().contains(Tags.Blocks.CHESTS_ENDER.getName()))
 		{
