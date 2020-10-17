@@ -15,7 +15,7 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.0.0'
+version = '1.0.1'
 group = 'com.legacy.ender_chest_horses'
 archivesBaseName = 'ender-chested-1.16.3'
 

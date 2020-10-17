@@ -127,6 +127,9 @@ public class EnderHorseCapability implements IEnderHorse
 			{
 				player.swing(hand, true);
 
+				if (!player.isCreative())
+					stack.shrink(1);
+
 				this.enderHorse.playSound(SoundEvents.ENTITY_DONKEY_CHEST, 1.0F, 1.0F);
 				event.setCanceled(true);
 			}
