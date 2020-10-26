@@ -2,7 +2,6 @@ package com.legacy.ender_chest_horses.container;
 
 import com.legacy.ender_chest_horses.registry.HorseContainers;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -18,14 +17,13 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class EnderHorseInventoryContainer extends Container
 {
-	private static final Minecraft CLIENT = Minecraft.getInstance();
-	private IInventory horseInventory;
+	private final IInventory horseInventory, playerInventory;
 	private final EnderChestInventory enderChestInventory;
 	public final AbstractHorseEntity horse;
 
 	public EnderHorseInventoryContainer(int id, PlayerInventory playerInventory, PacketBuffer buffer)
 	{
-		this(id, playerInventory, (AbstractHorseEntity) CLIENT.world.getEntityByID(buffer.readInt()));
+		this(id, playerInventory, (AbstractHorseEntity) playerInventory.player.world.getEntityByID(buffer.readInt()));
 	}
 
 	public EnderHorseInventoryContainer(int id, PlayerInventory playerInventory, final AbstractHorseEntity horse)
@@ -34,6 +32,7 @@ public class EnderHorseInventoryContainer extends Container
 		this.enderChestInventory = playerInventory.player.getInventoryEnderChest();
 		this.horse = horse;
 		this.horseInventory = horse.horseChest;
+		this.playerInventory = playerInventory;
 
 		playerInventory.openInventory(playerInventory.player);
 		this.enderChestInventory.openInventory(playerInventory.player);
@@ -177,6 +176,6 @@ public class EnderHorseInventoryContainer extends Container
 		super.onContainerClosed(playerIn);
 		this.horseInventory.closeInventory(playerIn);
 		this.enderChestInventory.closeInventory(playerIn);
-		EnderHorseInventoryContainer.CLIENT.player.inventory.closeInventory(playerIn);
+		this.playerInventory.closeInventory(playerIn);
 	}
 }
