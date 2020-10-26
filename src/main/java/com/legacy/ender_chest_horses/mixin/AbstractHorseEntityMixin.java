@@ -28,5 +28,14 @@ public class AbstractHorseEntityMixin
 
 			callback.cancel();
 		}
+		else if (id == 9)
+		{
+			EnderHorseCapability.ifPresent(horse, (enderHorse) ->
+			{
+				enderHorse.setEnderChested(false);
+			});
+
+			callback.cancel();
+		}
 	}
 }

@@ -33,13 +33,7 @@ public class HorseEvents
 	public void onEntityJoinWorld(EntityJoinWorldEvent event)
 	{
 		if (event.getEntity() instanceof AbstractHorseEntity)
-		{
-			AbstractHorseEntity horse = (AbstractHorseEntity) event.getEntity();
-			EnderHorseCapability.ifPresent(horse, (enderHorse) ->
-			{
-			});
-
-		}
+			EnderHorseCapability.ifPresent((AbstractHorseEntity) event.getEntity(), (enderHorse) -> enderHorse.setMarkedTime(100));
 	}
 
 	@SubscribeEvent
@@ -52,9 +46,7 @@ public class HorseEvents
 				if (horse.isEnderChested())
 				{
 					if (!event.getEntityLiving().world.isRemote)
-					{
 						event.getEntityLiving().entityDropItem(Blocks.ENDER_CHEST);
-					}
 
 					horse.setEnderChested(false);
 				}

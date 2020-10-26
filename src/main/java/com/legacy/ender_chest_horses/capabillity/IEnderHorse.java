@@ -11,7 +11,9 @@ public interface IEnderHorse
 
 	boolean isEnderChested();
 
-	boolean setEnderChested(boolean converting);
+	void setEnderChested(boolean converting);
+
+	void setMarkedTime(int time);
 
 	void tick();
 	

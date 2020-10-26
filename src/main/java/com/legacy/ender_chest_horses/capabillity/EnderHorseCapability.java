@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import com.legacy.ender_chest_horses.HorseEvents;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.passive.horse.AbstractChestedHorseEntity;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.passive.horse.HorseEntity;
@@ -31,6 +32,7 @@ public class EnderHorseCapability implements IEnderHorse
 	public static Capability<IEnderHorse> INSTANCE = null;
 
 	private boolean enderChested;
+	private int markedTime = 20;
 	private AbstractHorseEntity enderHorse;
 	protected Inventory horseChest;
 
@@ -105,7 +107,10 @@ public class EnderHorseCapability implements IEnderHorse
 	public void tick()
 	{
 		if (!this.enderHorse.world.isRemote && this.isEnderChested())
+		{
+			// --this.markedTime;
 			this.enderHorse.world.setEntityState(this.enderHorse, (byte) 8);
+		}
 	}
 
 	@Override
@@ -118,8 +123,19 @@ public class EnderHorseCapability implements IEnderHorse
 
 		if (this.enderHorse instanceof AbstractChestedHorseEntity && this.isEnderChested() && stack.getItem().getTags().contains(Tags.Blocks.CHESTS.getName()) && !stack.getItem().getTags().contains(Tags.Blocks.CHESTS_ENDER.getName()))
 		{
-			if (!player.world.isRemote)
-				event.setCanceled(true);
+			if (this.isEnderChested())
+			{
+				this.setEnderChested(false);
+				this.enderHorse.entityDropItem(new ItemStack(Blocks.ENDER_CHEST.asItem()));
+				this.enderHorse.world.setEntityState(this.enderHorse, (byte) 9);
+			}
+			/*else
+			{
+				if (!player.world.isRemote)
+					event.setCanceled(true);
+			}*/
+
+			return;
 		}
 		else if (!this.isEnderChested() && canChest && stack.getItem().getTags().contains(Tags.Blocks.CHESTS_ENDER.getName()) && this.enderHorse.isTame())
 		{
@@ -150,8 +166,15 @@ public class EnderHorseCapability implements IEnderHorse
 	}
 
 	@Override
-	public boolean setEnderChested(boolean chestedIn)
+	public void setEnderChested(boolean chestedIn)
 	{
-		return this.enderChested = chestedIn;
+		this.enderHorse.world.setEntityState(this.enderHorse, (byte) 8);
+		this.enderChested = chestedIn;
+	}
+
+	@Override
+	public void setMarkedTime(int time)
+	{
+		this.markedTime = time;
 	}
 }
