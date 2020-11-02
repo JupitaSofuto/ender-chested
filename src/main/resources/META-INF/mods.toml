@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[34,)"
+loaderVersion="[35,)"
 issueTrackerURL="https://gitlab.com/modding-legacy/ender_chest_horses/issues"
 license="https://www.gnu.org/licenses/gpl-3.0.en.html"
 [[mods]]
@@ -14,12 +14,12 @@ A simple mod that allows horses to be equipped with Ender Chests.'''
 [[dependencies.ender_chest_horses]]
     modId="forge"
     mandatory=true
-    versionRange="[34.1.0,)"
+    versionRange="[35.0.0,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.ender_chest_horses]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.3]"
+    versionRange="[1.16.4]"
     ordering="NONE"
     side="BOTH"
