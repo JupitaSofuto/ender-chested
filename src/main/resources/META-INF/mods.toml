@@ -8,7 +8,7 @@ version="${file.jarVersion}"
 displayName="Ender Chested"
 updateJSONURL="http://changelogs.moddinglegacy.com/ender-chest-horses.json"
 displayURL="https://moddinglegacy.com/"
-authors="KingPhygieBoo, Silver_David"
+authors="KingPhygieBoo, Silver_David, Jonathing"
 description='''
 A simple mod that allows horses to be equipped with Ender Chests.'''
 [[dependencies.ender_chest_horses]]
