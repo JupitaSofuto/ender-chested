@@ -22,7 +22,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public class EnderChestedMod
 {
 	public static final String NAME = "Ender Chested";
-	public static final String MODID = "ender_chest_horses";
+	public static final String MODID = "ender_chested";
 
 	public static ResourceLocation locate(String name)
 	{
