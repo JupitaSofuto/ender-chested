@@ -5,14 +5,14 @@ pipeline {
   agent {
     docker {
       args '-v gradle-cache:/home/gradle/.gradle'
-      image 'gradle:4.9.0-jdk8-alpine'
+      image 'gradle:jdk17'
     }
 
   }
   stages {
     stage('Build') {
       steps {
-        sh 'gradle build --no-daemon'
+        sh 'gradle build'
       }
     }
     stage('Archive') {

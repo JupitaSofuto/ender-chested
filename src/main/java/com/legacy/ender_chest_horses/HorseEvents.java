@@ -35,10 +35,7 @@ public class HorseEvents
 	public static void onEntityJoinWorld(PlayerEvent.StartTracking event)
 	{
 		if (event.getTarget()instanceof AbstractHorse horse && event.getPlayer()instanceof ServerPlayer sp)
-		{
-			System.out.println("TRACKING " + horse.level);
 			EnderHorseCapability.ifPresent(horse, (enderHorse) -> PacketHandler.sendToClient(new HorseStatusPacket(horse.getId(), enderHorse.isEnderChested()), sp));
-		}
 	}
 
 	@SubscribeEvent
