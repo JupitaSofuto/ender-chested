@@ -1,23 +1,21 @@
 package com.legacy.ender_chest_horses;
 
-import com.legacy.ender_chest_horses.capabillity.EnderHorseCapability;
 import com.legacy.ender_chest_horses.capabillity.IEnderHorse;
-import com.legacy.ender_chest_horses.capabillity.util.CapabilityStorage;
 import com.legacy.ender_chest_horses.client.HorseClient;
 import com.legacy.ender_chest_horses.client.gui.EnderChestHorseScreen;
-import com.legacy.ender_chest_horses.registry.HorseContainers;
+import com.legacy.ender_chest_horses.network.PacketHandler;
 import com.legacy.ender_chest_horses.registry.HorseRegistry;
 
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(EnderChestedMod.MODID)
@@ -38,32 +36,32 @@ public class EnderChestedMod
 
 	public EnderChestedMod()
 	{
+		IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
 		{
-			FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientInit);
-			FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientLoadComplete);
+			modBus.addListener(EnderChestedMod::clientInit);
+
+			modBus.addListener(HorseClient::registerLayers);
+			modBus.addListener(HorseClient::initRenderLayers);
 		});
 
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonInit);
-		FMLJavaModLoadingContext.get().getModEventBus().register(HorseRegistry.class);
+		modBus.register(HorseRegistry.class);
+
+		forgeBus.addListener(EnderChestedMod::onCapsRegistered);
+		forgeBus.register(HorseEvents.class);
+		
+		modBus.addListener((FMLCommonSetupEvent event) -> PacketHandler.register());
 	}
 
-	public void commonInit(FMLCommonSetupEvent event)
+	public static void onCapsRegistered(final RegisterCapabilitiesEvent event)
 	{
-		MinecraftForge.EVENT_BUS.register(new HorseEvents());
-
-		CapabilityManager.INSTANCE.register(IEnderHorse.class, new CapabilityStorage(), EnderHorseCapability::new);
+		event.register(IEnderHorse.class);
 	}
 
-	public void clientInit(FMLClientSetupEvent event)
+	public static void clientInit(FMLClientSetupEvent event)
 	{
-		ScreenManager.registerFactory(HorseContainers.ENDER_HORSE_INVENTORY, EnderChestHorseScreen::new);
-
-		MinecraftForge.EVENT_BUS.register(new HorseClient.Events());
-	}
-
-	public void clientLoadComplete(FMLLoadCompleteEvent event)
-	{
-		HorseClient.initLayers();
+		MenuScreens.register(HorseRegistry.ENDER_HORSE_INVENTORY.get(), EnderChestHorseScreen::new);
 	}
 }

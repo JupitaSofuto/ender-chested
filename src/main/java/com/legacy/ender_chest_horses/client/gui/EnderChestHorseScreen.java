@@ -1,71 +1,68 @@
 package com.legacy.ender_chest_horses.client.gui;
 
 import com.legacy.ender_chest_horses.EnderChestedMod;
-import com.legacy.ender_chest_horses.container.EnderHorseInventoryContainer;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.legacy.ender_chest_horses.container.EnderHorseInventoryMenu;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.screen.inventory.InventoryScreen;
-import net.minecraft.entity.passive.horse.AbstractHorseEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.player.Inventory;
 
-@OnlyIn(Dist.CLIENT)
-public class EnderChestHorseScreen extends ContainerScreen<EnderHorseInventoryContainer>
+public class EnderChestHorseScreen extends AbstractContainerScreen<EnderHorseInventoryMenu>
 {
-	private static final ResourceLocation GUI_TEXTURE = EnderChestedMod.locate("textures/gui/ender_chest_horse.png");
-	private final AbstractHorseEntity horse;
+	private static final ResourceLocation ENDER_HORSE_TEXTURE = EnderChestedMod.locate("textures/gui/ender_chest_horse.png");
+	private final AbstractHorse horse;
 
-	public EnderChestHorseScreen(EnderHorseInventoryContainer container, PlayerInventory playerInv, ITextComponent text)
+	public EnderChestHorseScreen(EnderHorseInventoryMenu container, Inventory playerInv, Component text)
 	{
 		super(container, playerInv, text);
 		this.horse = container.horse;
-		++this.ySize;
+		++this.imageHeight;
 	}
 
 	@Override
-	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
 	{
 		this.renderBackground(matrixStack);
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
-		this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
+		this.renderTooltip(matrixStack, mouseX, mouseY);
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y)
+	protected void renderLabels(PoseStack matrixStack, int x, int y)
 	{
-		this.font.func_243248_b(matrixStack, this.title, (float) this.titleX + 240 - this.font.getStringWidth(this.title.getString()), (float) this.titleY, 4210752);
-		this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float) this.playerInventoryTitleX, (float) this.playerInventoryTitleY, 4210752);
-		this.font.func_243248_b(matrixStack, new TranslationTextComponent("container.enderchest"), (float) this.titleX, (float) this.titleY, 4210752);
+		this.font.draw(matrixStack, this.title, (float) this.titleLabelX + 240 - this.font.width(this.title.getString()), (float) this.titleLabelY, 4210752);
+		this.font.draw(matrixStack, this.playerInventoryTitle, (float) this.inventoryLabelX, (float) this.inventoryLabelY, 4210752);
+		this.font.draw(matrixStack, Component.translatable("container.enderchest"), (float) this.titleLabelX, (float) this.titleLabelY, 4210752);
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y)
+	protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y)
 	{
-		this.minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
-		int i = (this.width - this.xSize) / 2;
-		int j = (this.height - this.ySize) / 2;
-		this.blit(matrixStack, i, j, 0, 0, this.xSize + 80, this.ySize - 1);
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderTexture(0, ENDER_HORSE_TEXTURE);
+
+		int i = (this.width - this.imageWidth) / 2;
+		int j = (this.height - this.imageHeight) / 2;
+		this.blit(matrixStack, i, j, 0, 0, this.imageWidth + 80, this.imageHeight - 1);
 
 		if (this.horse != null)
 		{
 			// 0, 166
 			// saddled
-			if (this.horse.func_230264_L__())
-			{
+			if (this.horse.isSaddleable())
 				this.blit(matrixStack, i + 178, j + 35 - 18, 0 + 18, 166, 18, 18);
-			}
 
-			if (this.horse.func_230276_fq_())
-			{
+			if (this.horse.canWearArmor())
 				this.blit(matrixStack, i + 178, j + 35, 0, 166, 18, 18);
-			}
 
-			InventoryScreen.drawEntityOnScreen(i + 222, j + 61, 18, (float) (i + 222) - x, (float) (j + 75 - 61) - y, this.horse);
+			InventoryScreen.renderEntityInInventory(i + 222, j + 61, 18, (float) (i + 222) - x, (float) (j + 75 - 61) - y, this.horse);
 		}
 	}
 }

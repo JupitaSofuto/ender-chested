@@ -1,23 +1,23 @@
 package com.legacy.ender_chest_horses.registry;
 
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.event.RegistryEvent.Register;
+import com.legacy.ender_chest_horses.EnderChestedMod;
+import com.legacy.ender_chest_horses.container.EnderHorseInventoryMenu;
+
+import net.minecraft.core.Registry;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.network.IContainerFactory;
+import net.minecraftforge.registries.RegisterEvent;
 
 public class HorseRegistry
 {
-	@SubscribeEvent
-	public static void registerContainers(Register<ContainerType<?>> event)
-	{
-		HorseContainers.init(event);
-	}
+	public static final Lazy<MenuType<EnderHorseInventoryMenu>> ENDER_HORSE_INVENTORY = Lazy.of(() -> new MenuType<>((IContainerFactory<EnderHorseInventoryMenu>) (id, playerInventory, buffer) -> new EnderHorseInventoryMenu(id, playerInventory, buffer)));
 
-	public static <T extends IForgeRegistryEntry<T>> void register(IForgeRegistry<T> registry, ResourceLocation key, T object)
+	@SubscribeEvent
+	public static void onRegister(RegisterEvent event)
 	{
-		object.setRegistryName(key);
-		registry.register(object);
+		if (event.getRegistryKey().equals(Registry.MENU_REGISTRY))
+			event.register(Registry.MENU_REGISTRY, EnderChestedMod.locate("ender_horse_inventory"), () -> ENDER_HORSE_INVENTORY.get());
 	}
 }
