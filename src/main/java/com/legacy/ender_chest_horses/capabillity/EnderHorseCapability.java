@@ -6,8 +6,6 @@ import java.util.function.Function;
 import javax.annotation.Nullable;
 
 import com.legacy.ender_chest_horses.HorseEvents;
-import com.legacy.ender_chest_horses.network.PacketHandler;
-import com.legacy.ender_chest_horses.network.s_to_c.HorseStatusPacket;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,7 +27,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 public class EnderHorseCapability implements IEnderHorse
 {
 	private boolean enderChested;
-	private int markedTime = 20;
 	private AbstractHorse enderHorse;
 	protected SimpleContainer horseChest;
 
@@ -101,18 +98,9 @@ public class EnderHorseCapability implements IEnderHorse
 	}
 
 	@Override
-	public void tick()
-	{
-		/*if (!this.enderHorse.level.isClientSide && this.isEnderChested() && this.enderHorse.tickCount % 20 == 0)
-		{
-			PacketHandler.sendToAllClients(new HorseStatusPacket(this.enderHorse.getId(), this.isEnderChested()), this.enderHorse.getLevel());
-		}*/
-	}
-
-	@Override
 	public void processInteract(PlayerInteractEvent.EntityInteract event)
 	{
-		Player player = event.getPlayer();
+		Player player = event.getEntity();
 		InteractionHand hand = event.getHand();
 		ItemStack stack = player.getItemInHand(hand);
 		boolean canChest = !(this.enderHorse instanceof Llama) && (this.enderHorse instanceof AbstractChestedHorse chestHorse && !chestHorse.hasChest() || !(this.enderHorse instanceof AbstractChestedHorse));
@@ -167,11 +155,5 @@ public class EnderHorseCapability implements IEnderHorse
 		this.enderChested = chestedIn;
 		
 		//PacketHandler.sendToAllClients(new HorseStatusPacket(this.enderHorse.getId(), this.isEnderChested()), this.enderHorse.getLevel());
-	}
-
-	@Override
-	public void setMarkedTime(int time)
-	{
-		this.markedTime = time;
 	}
 }

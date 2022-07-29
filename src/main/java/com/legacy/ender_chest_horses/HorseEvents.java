@@ -15,7 +15,6 @@ import net.minecraft.world.inventory.HorseInventoryMenu;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -25,30 +24,23 @@ import net.minecraftforge.network.NetworkHooks;
 public class HorseEvents
 {
 	@SubscribeEvent
-	public static void onLivingUpdate(LivingUpdateEvent event)
+	public static void onTrack(PlayerEvent.StartTracking event)
 	{
-		if (event.getEntityLiving() instanceof AbstractHorse)
-			EnderHorseCapability.ifPresent((AbstractHorse) event.getEntityLiving(), (horse) -> horse.tick());
-	}
-
-	@SubscribeEvent
-	public static void onEntityJoinWorld(PlayerEvent.StartTracking event)
-	{
-		if (event.getTarget()instanceof AbstractHorse horse && event.getPlayer()instanceof ServerPlayer sp)
+		if (event.getTarget()instanceof AbstractHorse horse && event.getEntity()instanceof ServerPlayer sp)
 			EnderHorseCapability.ifPresent(horse, (enderHorse) -> PacketHandler.sendToClient(new HorseStatusPacket(horse.getId(), enderHorse.isEnderChested()), sp));
 	}
 
 	@SubscribeEvent
 	public static void onEntityDeath(LivingDeathEvent event)
 	{
-		if (event.getEntityLiving() instanceof AbstractHorse)
+		if (event.getEntity() instanceof AbstractHorse)
 		{
-			EnderHorseCapability.ifPresent((AbstractHorse) event.getEntityLiving(), (horse) ->
+			EnderHorseCapability.ifPresent((AbstractHorse) event.getEntity(), (horse) ->
 			{
 				if (horse.isEnderChested())
 				{
-					if (!event.getEntityLiving().level.isClientSide)
-						event.getEntityLiving().spawnAtLocation(Blocks.ENDER_CHEST);
+					if (!event.getEntity().level.isClientSide)
+						event.getEntity().spawnAtLocation(Blocks.ENDER_CHEST);
 
 					horse.setEnderChested(false);
 				}
@@ -59,24 +51,21 @@ public class HorseEvents
 	@SubscribeEvent
 	public static void onPlayerInteract(PlayerInteractEvent.EntityInteract event)
 	{
-		if (event.getTarget() instanceof AbstractHorse)
-		{
-			AbstractHorse horse = (AbstractHorse) event.getTarget();
+		if (event.getTarget() instanceof AbstractHorse horse)
 			EnderHorseCapability.ifPresent(horse, (enderHorse) -> enderHorse.processInteract(event));
-		}
 	}
 
 	@SubscribeEvent
 	public static void onCapabilityAttached(AttachCapabilitiesEvent<Entity> event)
 	{
-		if (event.getObject() instanceof AbstractHorse horse && !event.getObject().getCapability(EnderHorseCapability.INSTANCE).isPresent())
+		if (event.getObject()instanceof AbstractHorse horse && !event.getObject().getCapability(EnderHorseCapability.INSTANCE).isPresent())
 			event.addCapability(EnderChestedMod.locate("ender_horse_capability"), new CapabilityProvider(new EnderHorseCapability(horse)));
 	}
 
 	@SubscribeEvent
 	public static void onContainerOpened(PlayerContainerEvent.Open event)
 	{
-		if (event.getContainer() instanceof HorseInventoryMenu && event.getPlayer()instanceof ServerPlayer player && player.getVehicle() != null && player.getVehicle()instanceof AbstractHorse horse)
+		if (event.getContainer() instanceof HorseInventoryMenu && event.getEntity()instanceof ServerPlayer player && player.getVehicle() != null && player.getVehicle()instanceof AbstractHorse horse)
 		{
 			EnderHorseCapability.ifPresent(horse, (enderHorse) ->
 			{
@@ -90,7 +79,7 @@ public class HorseEvents
 
 	public static void openEnderHorseContainer(ServerPlayer player, AbstractHorse enderHorse)
 	{
-		NetworkHooks.openGui((ServerPlayer) player, new SimpleMenuProvider((id, inventory, playerIn) ->
+		NetworkHooks.openScreen((ServerPlayer) player, new SimpleMenuProvider((id, inventory, playerIn) ->
 		{
 			return new EnderHorseInventoryMenu(id, inventory, enderHorse);
 		}, enderHorse.getName()), (buffer) -> buffer.writeInt(enderHorse.getId()));

@@ -296,8 +296,8 @@ dependencies {
 	// JEI
 	//compileOnly fg.deobf("mezz.jei:jei-1.19:11.0.0.206:forge-api")
 
-	compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
-  	compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
+	compileOnly fg.deobf("mezz.jei:jei-${jei_mc_version}-common-api:${jei_version}")
+  	compileOnly fg.deobf("mezz.jei:jei-${jei_mc_version}-forge-api:${jei_version}")
 
 	//runtimeOnly fg.deobf("mezz.jei:jei-1.18:9.0.0.40")
 }

@@ -19,10 +19,6 @@ public interface IEnderHorse
 	boolean isEnderChested();
 
 	void setEnderChested(boolean converting);
-
-	void setMarkedTime(int time);
-
-	void tick();
 	
 	void processInteract(PlayerInteractEvent.EntityInteract eventIn);
 }
