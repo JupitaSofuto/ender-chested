@@ -51,6 +51,9 @@ buildscript {
 
 		// Maven Central
 		mavenCentral()
+
+		// ModdingX
+		maven { url = 'https://maven.moddingx.org/' }
 	}
 	dependencies {
 		// Minecraft Forge ForgeGradle
@@ -61,6 +64,9 @@ buildscript {
 
 		// ParchmentMC Librarian
 		classpath group: 'org.parchmentmc', name: 'librarian', version: '1.+', changing: true
+
+		// ModdingX ModGradle
+		classpath group: 'org.moddingx', name: 'ModGradle', version: '3.1.2'
 	}
 }
 
@@ -114,6 +120,9 @@ apply from: 'publish.gradle'
 
 // Ensure that the IDE knows that this project is for Java 16 (or at the least, SDK level 16) and nothing else.
 java.toolchain.languageVersion = JavaLanguageVersion.of(Integer.parseInt(java_language_version))
+
+// // Make a SRG sources jar
+apply plugin: 'org.moddingx.modgradle.sourcejar'
 
 // This section prints out the Java, Minecraft, and Mod info just to double check all the values are correct.
 // It is printed on every build, so make sure you double check!
